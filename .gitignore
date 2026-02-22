@@ -6,3 +6,6 @@ gha-creds-*.json
 
 # Ignore analysis output directory
 output/
+
+# Ignore Python cache directories
+__pycache__/
