@@ -9,9 +9,11 @@ def identify_characters_with_ollama(text, model="llama2"):
     Identifies characters and their frequencies using a local Ollama server.
     Assumes Ollama server is running and the specified model is available.
     """
-    prompt = f"""Given the following story text, identify all named characters and their frequency.
-Respond with a JSON object where keys are character names and values are their frequencies.
-Only include actual character names, not generic terms or common nouns.
+    prompt = f"""Given only the following story text, identify all named characters and their frequency.
+Your response MUST be a JSON object with keys as character names and values as their frequencies.
+Do NOT include any other text or conversational filler.
+Only include actual character names found strictly within the provided story text, not generic terms or common nouns, and do not infer characters.
+If no named characters are found in the provided story text, respond ONLY with the following JSON: {{"error": "No named characters found in the provided text."}}
 
 Story Text:
 {text}
@@ -23,16 +25,18 @@ JSON Response:
         # The Ollama response typically contains a 'response' field with the LLM's output.
         # We expect this output to be a JSON string.
         llm_output = response.get('response', '').strip()
-
-        # Attempt to find and parse the JSON string within the LLM output
-        # Sometimes LLMs add conversational filler, so we need to be robust.
-        json_match = re.search(r'\{.*\}', llm_output, re.DOTALL)
-        if json_match:
-            json_string = json_match.group(0)
-            characters = json.loads(json_string)
-            return characters
-        else:
-            print(f"Warning: No JSON object found in LLM response for character identification.")
+        try:
+            parsed_json = json.loads(llm_output)
+            if isinstance(parsed_json, dict) and parsed_json.get("error") == "No named characters found in the provided text.":
+                print("No named characters found in the provided text (as per LLM).")
+                return {}
+            elif isinstance(parsed_json, dict):
+                return parsed_json
+            else:
+                print(f"Warning: LLM response was not a JSON object as expected.")
+                return {}
+        except json.JSONDecodeError:
+            print(f"Error parsing JSON response from Ollama. LLM output: {llm_output}")
             return {}
     except ollama.ResponseError as e:
         print(f"Error communicating with Ollama server: {e}")
