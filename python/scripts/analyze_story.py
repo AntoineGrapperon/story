@@ -4,50 +4,78 @@ import re
 import ollama
 import json
 
-def identify_characters_with_ollama(text, model="llama2"):
+def chunk_text(text, chunk_size=1000):
     """
-    Identifies characters and their frequencies using a local Ollama server.
+    Splits the given text into chunks of approximately `chunk_size` words,
+    attempting to maintain sentence boundaries.
+    """
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    chunks = []
+    current_chunk_words = []
+    current_chunk_length = 0
+
+    for sentence in sentences:
+        sentence_words = sentence.split()
+        sentence_length = len(sentence_words)
+
+        # If adding the next sentence exceeds the chunk_size, start a new chunk
+        # unless the current chunk is empty or the sentence itself is larger than chunk_size
+        if current_chunk_length + sentence_length > chunk_size and current_chunk_words:
+            chunks.append(" ".join(current_chunk_words))
+            current_chunk_words = []
+            current_chunk_length = 0
+
+        current_chunk_words.extend(sentence_words)
+        current_chunk_length += sentence_length
+    
+    if current_chunk_words:
+        chunks.append(" ".join(current_chunk_words))
+    
+    return chunks
+
+def identify_characters_with_ollama(text_chunks, model="llama2"):
+    """
+    Identifies characters and their frequencies using a local Ollama server by processing text in chunks.
     Assumes Ollama server is running and the specified model is available.
     """
-    prompt = f"""Given only the following story text, identify all named characters and their frequency.
+    aggregated_characters = {}
+
+    for i, chunk in enumerate(text_chunks):
+        print(f"Processing chunk {i+1}/{len(text_chunks)}...")
+        prompt = f"""Given only the following story text, identify all named characters and their frequency.
 Your response MUST be a JSON object with keys as character names and values as their frequencies.
 Do NOT include any other text or conversational filler.
 Only include actual character names found strictly within the provided story text, not generic terms or common nouns, and do not infer characters.
 If no named characters are found in the provided story text, respond ONLY with the following JSON: {{"error": "No named characters found in the provided text."}}
 
 Story Text:
-{text}
+{chunk}
 
 JSON Response:
 """
-    try:
-        response = ollama.generate(model=model, prompt=prompt)
-        # The Ollama response typically contains a 'response' field with the LLM's output.
-        # We expect this output to be a JSON string.
-        llm_output = response.get('response', '').strip()
         try:
+            response = ollama.generate(model=model, prompt=prompt)
+            llm_output = response.get('response', '').strip()
+            
             parsed_json = json.loads(llm_output)
             if isinstance(parsed_json, dict) and parsed_json.get("error") == "No named characters found in the provided text.":
-                print("No named characters found in the provided text (as per LLM).")
-                return {}
+                print(f"No named characters found in chunk {i+1} (as per LLM).")
             elif isinstance(parsed_json, dict):
-                return parsed_json
+                for char, freq in parsed_json.items():
+                    if char in aggregated_characters:
+                        aggregated_characters[char] += freq
+                    else:
+                        aggregated_characters[char] = freq
             else:
-                print(f"Warning: LLM response was not a JSON object as expected.")
-                return {}
+                print(f"Warning: LLM response for chunk {i+1} was not a JSON object as expected. Output: {llm_output}")
+        except ollama.ResponseError as e:
+            print(f"Error communicating with Ollama server for chunk {i+1}: {e}")
         except json.JSONDecodeError:
-            print(f"Error parsing JSON response from Ollama. LLM output: {llm_output}")
-            return {}
-    except ollama.ResponseError as e:
-        print(f"Error communicating with Ollama server: {e}")
-        return {}
-    except json.JSONDecodeError as e:
-        print(f"Error parsing JSON response from Ollama: {e}")
-        print(f"LLM output: {llm_output}")
-        return {}
-    except Exception as e:
-        print(f"An unexpected error occurred during Ollama interaction: {e}")
-        return {}
+            print(f"Error parsing JSON response from Ollama for chunk {i+1}. LLM output: {llm_output}")
+        except Exception as e:
+            print(f"An unexpected error occurred during Ollama interaction for chunk {i+1}: {e}")
+
+    return aggregated_characters
 
 def read_text_file(file_path):
     """
@@ -95,7 +123,8 @@ def main():
     print(f"Estimated Reading Time: {reading_time} minutes")
 
     print("\n--- Character Identification (via Ollama) ---")
-    characters = identify_characters_with_ollama(text_content, model=args.ollama_model)
+    text_chunks = chunk_text(text_content)
+    characters = identify_characters_with_ollama(text_chunks, model=args.ollama_model)
     if characters:
         for char, freq in characters.items():
             print(f"- {char}: {freq}")
