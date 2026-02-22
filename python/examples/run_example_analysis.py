@@ -27,8 +27,8 @@ def run_example_analysis():
         output_filename = f"analysis_report_{os.path.splitext(story_file)[0]}.txt"
         output_filepath = os.path.join(EXAMPLE_OUTPUT_DIRECTORY, output_filename)
 
-        print(f"
-Analyzing: {input_filepath}")
+        print(f"""
+Analyzing: {input_filepath}""")
         print(f"Saving report to: {output_filepath}")
 
         try:
@@ -51,8 +51,8 @@ Analyzing: {input_filepath}")
             print(f"Stderr: {e.stderr}")
         except FileNotFoundError:
             print(f"Error: Python interpreter or script '{ANALYSIS_SCRIPT}' not found. Check paths.")
-    print(f"
---- Example Analysis Complete. Reports in {EXAMPLE_OUTPUT_DIRECTORY} ---")
+    print(f"""
+--- Example Analysis Complete. Reports in {EXAMPLE_OUTPUT_DIRECTORY} ---""")
 
 if __name__ == "__main__":
     run_example_analysis()
