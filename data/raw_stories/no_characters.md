@@ -1,0 +1,1 @@
+This is a sample text. It discusses the weather and general observations. There are no specific named entities that could be considered characters in this text. The sky is blue and the sun is shining. Birds are singing.

@@ -34,7 +34,7 @@ Analyzing: {input_filepath}""")
         try:
             # Run the analysis script as a subprocess
             result = subprocess.run(
-                ["python", ANALYSIS_SCRIPT, input_filepath],
+                ["python", ANALYSIS_SCRIPT, input_filepath, "--ollama_model", "llama3.2:3b"],
                 capture_output=True,
                 text=True,
                 check=True  # Raise an exception for non-zero exit codes
