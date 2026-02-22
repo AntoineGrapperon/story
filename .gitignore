@@ -3,3 +3,6 @@
 
 # GitHub App credentials
 gha-creds-*.json
+
+# Ignore analysis output directory
+output/
