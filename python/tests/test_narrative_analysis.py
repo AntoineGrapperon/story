@@ -59,11 +59,11 @@ def test_narrative_analysis_test_chapter():
             check=True,  # Raise an exception for non-zero exit codes
             timeout=600 # 10 minutes timeout for the full analysis
         )
-        print(f"Script stdout:
-{result.stdout}")
+        print(f"""Script stdout:
+{result.stdout}""")
         if result.stderr:
-            print(f"Script stderr:
-{result.stderr}")
+            print(f"""Script stderr:
+{result.stderr}""")
         
         # Assert that the output file was created and is not empty
         assert os.path.exists(output_filepath)

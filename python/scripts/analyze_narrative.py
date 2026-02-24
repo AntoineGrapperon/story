@@ -162,48 +162,30 @@ def generate_report(story_filepath: str, analysis_results: list, output_dir: str
     os.makedirs(output_dir, exist_ok=True) # Ensure output directory exists
 
     with open(output_filename, 'w', encoding='utf-8') as f:
-        f.write(f"# Narrative Analysis Report: {story_title}
-
-")
-        f.write("## Setups and Payoffs
-
-")
+        f.write(f"# Narrative Analysis Report: {story_title}\n\n")
+        f.write("## Setups and Payoffs\n\n")
         
         unfulfilled_setups = []
         for result in analysis_results:
-            f.write(f"### Setup ID: {result['id']}
-")
-            f.write(f"- **Description:** {result['description']}
-")
-            f.write(f"- **Introduced At:** {result['location']}
-")
-            f.write(f"- **Status:** {result['status']}
-")
+            f.write(f"### Setup ID: {result['id']}\n")
+            f.write(f"- **Description:** {result['description']}\n")
+            f.write(f"- **Introduced At:** {result['location']}\n")
+            f.write(f"- **Status:** {result['status']}\n")
             if result['status'] == "Paid Off":
-                f.write(f"- **Payoff Description:** {result['payoff_description']}
-")
-                f.write(f"- **Payoff Location:** {result['payoff_location']}
-")
+                f.write(f"- **Payoff Description:** {result['payoff_description']}\n")
+                f.write(f"- **Payoff Location:** {result['payoff_location']}\n")
             else:
                 unfulfilled_setups.append(result)
-            f.write("
-")
+            f.write("\n")
         
         if unfulfilled_setups:
-            f.write("## Unfulfilled Setups
-
-")
+            f.write("## Unfulfilled Setups\n\n")
             for setup in unfulfilled_setups:
-                f.write(f"### Setup ID: {setup['id']}
-")
-                f.write(f"- **Description:** {setup['description']}
-")
-                f.write(f"- **Introduced At:** {setup['location']}
-")
-                f.write(f"- **Reason Unfulfilled:** {setup['payoff_description']} (LLM determined)
-")
-                f.write("
-")
+                f.write(f"### Setup ID: {setup['id']}\n")
+                f.write(f"- **Description:** {setup['description']}\n")
+                f.write(f"- **Introduced At:** {setup['location']}\n")
+                f.write(f"- **Reason Unfulfilled:** {setup['payoff_description']} (LLM determined)\n")
+                f.write("\n")
 
     print(f"Narrative analysis report saved to {output_filename}")
 
