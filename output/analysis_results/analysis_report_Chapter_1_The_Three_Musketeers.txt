@@ -1,0 +1,3 @@
+--- Analysis Report for /data/data/com.termux/files/home/story/data/raw_stories/Chapter_1_The_Three_Musketeers.md ---
+Word Count: 5843
+Estimated Reading Time: 30 minutes
