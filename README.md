@@ -50,4 +50,32 @@ Performance can vary significantly on mobile devices. If you experience timeouts
 
 ## Usage
 
-(Further usage instructions will go here, once the character profiling feature is fully integrated and stable.)
+### Character Profiling
+
+To generate character profiles, use the `character_profiler.py` script:
+
+```bash
+python python/scripts/character_profiler.py <path_to_story_file> "<Character Name>" --ollama_model <your_ollama_model>
+```
+Example:
+```bash
+python python/scripts/character_profiler.py data/raw_stories/The_Three_Musketeers.md "D'Artagnan" --ollama_model llama3.2:3b
+```
+The generated profile will be saved to `output/character_summaries/`.
+
+### Narrative Analysis (Setups & Payoffs)
+
+To perform a two-step analysis for identifying setups and their payoffs (or unfulfilled status), use the `analyze_narrative.py` script:
+
+```bash
+python python/scripts/analyze_narrative.py <path_to_story_file> --ollama_model <your_ollama_model> --output_dir <optional_output_directory> --max_context_words_setup <int> --max_context_words_payoff <int>
+```
+Example:
+```bash
+python python/scripts/analyze_narrative.py data/raw_stories/test_chapter.md --ollama_model llama3.2:3b --max_context_words_setup 500 --max_context_words_payoff 1000
+```
+This script will generate a detailed markdown report in the specified (or default `output/narrative_analysis_reports/`) directory, outlining identified setups, their payoffs, and any setups that remained unfulfilled.
+
+## Development Notes
+(Further development notes will be added here as features mature.)
+
