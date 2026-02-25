@@ -65,34 +65,34 @@ def generate_character_summary(character_name, character_context, llm_model="lla
 
 Character Name: {character_name}
 
-## Physical Appearance:
+### Physical Appearance:
 (Describe how they look. If not mentioned, state 'Not explicitly described.')
 
-## Personality Traits:
+### Personality Traits:
 (Describe their typical behavior, attitudes, and temperament. Use adjectives and provide brief examples if the text allows.)
 
-## Backstory/History:
+### Backstory/History:
 (Mention relevant past events or upbringing that shaped them, if described.)
 
-## Motivations & Goals:
+### Motivations & Goals:
 (What drives them? What do they want to achieve, based on their actions and thoughts in the text?)
 
-## Strengths & Weaknesses:
+### Strengths & Weaknesses:
 (Identify their admirable qualities, skills, and flaws/vulnerabilities.)
 
-## Relationships:
+### Relationships:
 (How do they interact with other characters mentioned in the text? Provide specific names if possible.)
 
-## Dialogue & Speech Patterns:
+### Dialogue & Speech Patterns:
 (Describe their unique way of speaking, if distinct. Provide a short example if available.)
 
-## Actions & Behavior:
+### Actions & Behavior:
 (Summarize their key actions and choices in the provided text.)
 
-## Internal Thoughts & Feelings:
+### Internal Thoughts & Feelings:
 (What inner thoughts or emotions are revealed? If not directly revealed, infer from actions.)
 
-## Growth & Arc (Initial Impression):
+### Growth & Arc (Initial Impression):
 (How do they change or develop in the provided excerpts, or what is their initial trajectory? If no change, describe their static state.)
 
 ---
