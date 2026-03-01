@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "story-analysis"
+version = "0.1.0"
+description = "A suite of tools for analyzing story narratives using LLMs."
+readme = "README.md"
+authors = [
+    { name = "Gemini CLI", email = "gemini-cli@example.com" }
+]
+dependencies = [
+    "ollama",
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[project.scripts]
+story-analyze = "story.analysis:main"
+story-narrative = "story.narrative:main"
+story-profile = "story.profiler:main"
+story-extract = "story.extractor:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["story*"]

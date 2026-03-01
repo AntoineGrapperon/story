@@ -3,7 +3,7 @@ import os
 import pytest
 
 # Define paths relative to the project root
-ANALYSIS_SCRIPT = "story/scripts/analyze_story.py"
+ANALYSIS_SCRIPT = "story/analysis.py"
 RAW_DATA_DIRECTORY = "data/raw_stories"
 
 def test_story_analysis_suite(tmp_path):
@@ -31,7 +31,7 @@ def test_story_analysis_suite(tmp_path):
 
         # Create a environment that includes our mock ollama
         env = os.environ.copy()
-        env["PYTHONPATH"] = os.path.abspath("story/tests/mocks") + os.pathsep + env.get("PYTHONPATH", "")
+        env["PYTHONPATH"] = os.path.abspath("tests/mocks") + os.pathsep + env.get("PYTHONPATH", "")
 
         try:
             # Run the analysis script as a subprocess

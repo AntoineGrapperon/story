@@ -4,7 +4,7 @@ import pytest
 import shutil
 
 # Define paths relative to the project root
-CHARACTER_PROFILER_SCRIPT = "story/scripts/character_profiler.py"
+CHARACTER_PROFILER_SCRIPT = "story/profiler.py"
 RAW_DATA_DIRECTORY = "data/raw_stories"
 OUTPUT_CHARACTER_SUMMARIES_DIR = "output/character_summaries"
 
@@ -52,7 +52,7 @@ def test_character_profiling_d_artagnan():
 
     # Create a environment that includes our mock ollama
     env = os.environ.copy()
-    env["PYTHONPATH"] = os.path.abspath("story/tests/mocks") + os.pathsep + env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = os.path.abspath("tests/mocks") + os.pathsep + env.get("PYTHONPATH", "")
 
     try:
         # Run the character profiler script as a subprocess
