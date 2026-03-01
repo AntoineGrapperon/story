@@ -50,13 +50,18 @@ def test_character_profiling_d_artagnan():
     print(f"Running character profiler for: {character_name} from {input_story_file}")
     print(f"Expected output to: {output_filepath}")
 
+    # Create a environment that includes our mock ollama
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.path.abspath("story/tests/mocks") + os.pathsep + env.get("PYTHONPATH", "")
+
     try:
         # Run the character profiler script as a subprocess
         result = subprocess.run(
             ["python", CHARACTER_PROFILER_SCRIPT, input_story_file, character_name, "--ollama_model", "llama3.2:3b"],
             capture_output=True,
             text=True,
-            check=True  # Raise an exception for non-zero exit codes
+            check=True,  # Raise an exception for non-zero exit codes
+            env=env
         )
         print(f"Script stdout:\n{result.stdout}")
         if result.stderr:
