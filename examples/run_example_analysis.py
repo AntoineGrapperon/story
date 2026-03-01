@@ -31,13 +31,18 @@ def run_example_analysis():
 Analyzing: {input_filepath}""")
         print(f"Saving report to: {output_filepath}")
 
+        # Create a environment that includes our mock ollama
+        env = os.environ.copy()
+        env["PYTHONPATH"] = os.path.abspath("tests/mocks") + os.pathsep + env.get("PYTHONPATH", "")
+
         try:
-            # Run the analysis script as a subprocess
+            # Run the analysis using the console script command
             result = subprocess.run(
-                ["python", ANALYSIS_SCRIPT, input_filepath, "--ollama_model", "llama3.2:3b"],
+                ["story-analyze", input_filepath, "--ollama_model", "llama3.2:3b"],
                 capture_output=True,
                 text=True,
-                check=True  # Raise an exception for non-zero exit codes
+                check=True,  # Raise an exception for non-zero exit codes
+                env=env
             )
             
             # Write the captured stdout to the output file

@@ -4,7 +4,7 @@ import pytest
 import shutil
 
 # Define paths relative to the project root
-ANALYZE_NARRATIVE_SCRIPT = "story/scripts/analyze_narrative.py"
+ANALYZE_NARRATIVE_SCRIPT = "story/narrative.py"
 RAW_DATA_DIRECTORY = "data/raw_stories"
 OUTPUT_NARRATIVE_REPORTS_DIR = "output/narrative_analysis_reports"
 
@@ -50,6 +50,10 @@ def test_narrative_analysis_test_chapter():
     print(f"Running narrative analysis for: {input_story_file}")
     print(f"Expected output report to: {output_filepath}")
 
+    # Create a environment that includes our mock ollama
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.path.abspath("tests/mocks") + os.pathsep + env.get("PYTHONPATH", "")
+
     try:
         # Run the narrative analysis script as a subprocess
         result = subprocess.run(
@@ -57,7 +61,8 @@ def test_narrative_analysis_test_chapter():
             capture_output=True,
             text=True,
             check=True,  # Raise an exception for non-zero exit codes
-            timeout=600 # 10 minutes timeout for the full analysis
+            timeout=600, # 10 minutes timeout for the full analysis
+            env=env
         )
         print(f"""Script stdout:
 {result.stdout}""")
