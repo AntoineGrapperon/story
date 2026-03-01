@@ -1,2 +1,5 @@
 pytest
 ollama
+streamlit
+pandas>=2.2.3
+numpy>=2.2.5
