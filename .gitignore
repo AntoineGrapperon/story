@@ -10,3 +10,9 @@ output/example_analysis_results/
 
 # Ignore Python cache directories
 __pycache__/
+
+# Virtual Environment
+.venv/
+
+# Python packaging
+*.egg-info/
