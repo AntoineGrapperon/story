@@ -85,6 +85,12 @@ Starting his journey.
 """
         }
 
+    # Mock for text_compression.py
+    if "Summarize the following text" in prompt:
+        return {
+            'response': "This is a mock LLM summary of the text."
+        }
+
     # Default fallback response
     return {
         'response': "This is a mock response from the fake Ollama."

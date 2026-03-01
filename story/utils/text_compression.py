@@ -1,16 +1,15 @@
 import re
+import ollama
 from typing import Literal, Optional
 
-def llm_compress_text(text: str, llm_client: Optional[object] = None, max_length: int = 100) -> str:
+def llm_compress_text(text: str, model: str = "llama3.2:3b", max_length: Optional[int] = None) -> str:
     """
-    Compresses text using an LLM-based summarization approach.
-    Currently uses a placeholder, but designed for integration with actual LLM APIs.
+    Compresses text using an LLM-based summarization approach via Ollama.
 
     Args:
         text (str): The input text to compress.
-        llm_client (Optional[object]): An optional LLM client object. If None, a
-                                       placeholder summarization is performed.
-        max_length (int): The maximum length of the summarized text if no LLM client is provided.
+        model (str): The name of the Ollama model to use.
+        max_length (Optional[int]): Optional hint for the maximum length of the summarized text.
 
     Returns:
         str: The LLM-compressed version of the text.
@@ -18,30 +17,17 @@ def llm_compress_text(text: str, llm_client: Optional[object] = None, max_length
     if not text:
         return ""
 
-    if llm_client:
-        # In a real scenario, this would involve calling the LLM API
-        # For example:
-        # response = llm_client.summarize(text, max_tokens=max_length)
-        # return response.summary
-        return f"LLM Summary of: {text[:max_length]}..." if len(text) > max_length else f"LLM Summary of: {text}"
-    else:
-        # Placeholder summarization: prioritize completing sentences
-        sentences = re.split(r'(?<=[.!?])\s+', text)
-        compressed_text_parts = []
-        current_length = 0
-        for sentence in sentences:
-            # Add 1 for the space that will be joined later
-            if current_length + len(sentence) + (1 if compressed_text_parts else 0) <= max_length:
-                compressed_text_parts.append(sentence)
-                current_length += len(sentence) + (1 if compressed_text_parts else 0)
-            else:
-                break
-        
-        if compressed_text_parts:
-            return " ".join(compressed_text_parts)
-        else:
-            # If even the first sentence is too long, just truncate
-            return text[:max_length]
+    prompt = f"Summarize the following text while preserving its core meaning and key details. Keep it concise.\n\nText:\n{text}\n\nSummary:"
+    if max_length:
+        prompt = f"Summarize the following text in approximately {max_length} characters or less, while preserving its core meaning and key details. Keep it concise.\n\nText:\n{text}\n\nSummary:"
+
+    try:
+        response = ollama.generate(model=model, prompt=prompt)
+        return response.get('response', '').strip()
+    except Exception as e:
+        print(f"Error communicating with Ollama for text compression: {e}")
+        # Fallback: return original text truncated to max_length if provided
+        return text[:max_length] if max_length else text
 
 
 def compress_text(text: str, method: Literal["simple", "llm"] = "simple", **kwargs) -> str:
@@ -52,8 +38,8 @@ def compress_text(text: str, method: Literal["simple", "llm"] = "simple", **kwar
         text (str): The input text to compress.
         method (Literal["simple", "llm"]): The compression method to use.
                                             "simple" uses whitespace and stopword removal.
-                                            "llm" uses an LLM-based summarization (placeholder).
-        **kwargs: Additional arguments for the compression method (e.g., llm_client, max_length for "llm" method).
+                                            "llm" uses an LLM-based summarization via Ollama.
+        **kwargs: Additional arguments for the compression method (e.g., model, max_length for "llm" method).
 
     Returns:
         str: The compressed version of the text.
